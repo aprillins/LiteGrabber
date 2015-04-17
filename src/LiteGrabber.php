@@ -4,10 +4,9 @@ use Aprillins\LiteGrabber\Interfaces\HtmlTag;
 use Aprillins\LiteGrabber\Classes\HTMLTagsMethod;
 use Aprillins\LiteGrabber\Classes\HTMLAttributesMethod;
 use Aprillins\LiteGrabber\Classes\HTMLMethodProcessor;
-use Aprillins\LiteGrabber\Classes\ProcessorArguments;
+use Aprillins\LiteGrabber\Classes\ArgumentProcessor;
 use Aprillins\LiteGrabber\Classes\LiteGrabberProcessor;
-
-use Stringy\StaticStringy as S;
+use Aprillins\LiteGrabber\Classes\ResultProcessor;
 use DomDocument;
 use DOMXPath;
 use Exception;
@@ -22,79 +21,62 @@ class LiteGrabber
     /**
      * Variable to put all the processed query in.
      *
-     * @var string;
+     * @var string
      */
     protected $query;
 
     /**
-     * Every website has pages. If you want to grab a page the URL you concern
-     * goes on this variable.
-     *
-     * @var string;
-     */
-    protected $url;
-
-    /**
-     * This is alphabetical list of some attribute often used in HTML
-     *
-     * @var array
-     */
-    protected $htmlattributes = [
-        'alt', 'disabled', 'href', 'id', 'src', 'style', 'title', 'value',
-        'name', 'class', 'rel', 'type'
-    ];
-
-    /**
-     * Variable for storing reconstructed $htmlattributes variable in order to
-     * match at[Function] such as atSrc, atStyle, and such.
-     *
-     * @var array
-     */
-    protected $rhtmlattributes;
-
-    /**
-     * The result of curlGet() method goes on this variable. The content will be
-     * like if you push CTRL+U on Mozilla Firefox to see its source.
-     *
-     * @var string;
-     */
-    protected $source;
-
-    /**
      * DOMXPath instantiation stored in this variable.
      *
-     * @var object;
+     * @var object
      */
     protected $xPathObj;
 
     /**
-     * If the testing is set to true then the class will not execute the curlGet()
-     * method and returnXPathObject() method
+     * HTMLTagsMethod instantiation variable.
      *
-     * @var boolean;
+     * @var object
      */
-
-
     private $tagsMethod; 
+
+    /**
+     * HTMLAttributeMethod instantiation variable.
+     *
+     * @var object
+     */
     private $attributesMethod;
+
+    /**
+     * HTMLMethodProcessor instantiation variable.
+     *
+     * @var object
+     */
     private $htmlMethodProcessor;
 
+    /**
+     * Calling callFunctions() and initGrabber() functions as initialization.
+     *
+     * @param string $url
+     */
     public function __construct($url)
     {
         $this->callFunctions();
         $this->initGrabber($url);
     }
 
+    /**
+     * Setting up all the things to make this class working.
+     *
+     */
     public function callFunctions()
     {
         $htmlTagsMethod = new HTMLTagsMethod;
-        $this->tagsMethod = $htmlTagsMethod->getList();
-
         $htmlAttributesMethod = new HTMLAttributesMethod;
+        $this->htmlMethodProcessor = new HTMLMethodProcessor();
+        $this->tagsMethod = $htmlTagsMethod->getList();
         $this->attributesMethod = $htmlAttributesMethod->getAsProperty();
-
-        $this->htmlMethodProcessor = new HTMLMethodProcessor;
     }
+
     /**
      * If you're gonna test the class using PHPUnit you can call either
      * by using this method or the class constructor argument. This method
@@ -106,119 +88,30 @@ class LiteGrabber
      */
     public function initGrabber($url)
     {
-        $this->url = $url;
         $this->clearQuery();
         $lgp = new LiteGrabberProcessor($url);
         $this->xPathObj = $lgp->getXPathObj();
     }
 
     /**
-     * Get value of $testing variable. 
+     * This is magic method to filter the method chains. It requires
+     * HMTLMethodProcessor class to filter the method. If one of the method
+     * in the chain is not found, then this method will return false
      *
-     * @return bool
+     * @param string $method
+     * @param array $args
+     * @return object|false
      */
-    public function getTesting()
-    {
-        return $this->testing;
-    }
-
     public function __call($method, $args)
     {   
-        if (in_array($method, $this->tagsMethod))
-            return $this->methodProcessor($method, $args);
+
+        $this->htmlMethodProcessor->filter($method, $args, $this->query);
+        $query = $this->htmlMethodProcessor->getQuery();
+        $this->setQuery($query);
         
-        if (in_array($method, $this->attributesMethod)) 
-            return $this->atMethodProcessor($method, $args);
-            
-        //return new Exception("Sorry $method() method not found!");
-        return false;
-    }
+        if(!$this->getQuery())
+            return false;
 
-    /**
-     * This method has two functions: first, to return $this->htmlattributes.
-     * Second, to reconstruct the $this->htmlattributes array to have 'at' 
-     * prefix and camelCase for each value in the array and return it as result.
-     * 
-     * @param bool $reconstruct
-     * @return null
-     */
-    public function getHtmlAttributes($reconstruct = false)
-    {
-        $htmlattributes = $this->htmlattributes;
-
-        if(!$reconstruct) {
-            return $this->htmlattributes;
-        }
-
-        array_walk($htmlattributes, function(&$item){ $item = 'at'.ucfirst($item); } );
-        return $htmlattributes;
-    }
-
-    /**
-     * Get all available HTML tags from $htmltags variable.
-     *
-     * @return array
-     */
-    public function getHtmlTags()
-    {
-        return $this->htmltags;
-    }
-
-    /**
-     * This build query for XPath attribute.
-     *
-     * @param array $args
-     * @return string
-     */
-    public function htmlTagsProcessor($args = array())
-    {
-       
-        if (!empty($args[0])) {
-            $query = '[@'.key($args[0]).'="'.current($args[0]).'"]';
-        } else {
-            return;
-        }
-
-        return $query;
-    }
-
-    /**
-     * Method processor for HTML tags.
-     *
-     * @param string $method
-     * @param array $args
-     * @return object
-     */
-    public function methodProcessor($method, $args)
-    {   
-
-        $query = $this->htmlTagsProcessor($args);
-        
-        if (!empty($args[1]) && $args[1] == true) {
-            $this->query .= '//'.$method.$query;
-        } else {
-            $this->query .= '/'.$method.$query;
-        }
-        return $this;
-    }   
-    
-    /**
-     * Method processor for HTML attributes.
-     *
-     * @param string $method
-     * @param array $args
-     * @return object
-     */
-    public function atMethodProcessor($method, $args)
-    {
-        $query = $this->htmlTagsProcessor($args);
-        $method = S::removeLeft($method, 'at');
-        $method = S::toLowerCase($method);
-        if (!empty($args[1]) && $args[1] == true) {
-            $this->query .= '//@'.$method.$query;
-        } else {
-            $this->query .= '/@'.$method.$query;
-        }
         return $this;
     }
 
@@ -235,9 +128,14 @@ class LiteGrabber
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        
     }
 
+    /**
+     * An alternative method of query() method of DOMXPath.
+     *
+     * @param string $query
+     * @return object
+     */
     public function execute($query)
     {
         return $this->query($query);
@@ -246,6 +144,7 @@ class LiteGrabber
     /**
      * Set query string to $query variable.
      *
+     * @param string $query
      */
     public function setQuery($query)
     {
@@ -259,6 +158,7 @@ class LiteGrabber
      */
     public function getQuery()
     {     
+
         return $this->query;
     }
 
@@ -270,6 +170,21 @@ class LiteGrabber
     public function clearQuery()
     {
         $this->query = null;
+        $this->htmlMethodProcessor->clearQuery();
+    }
+
+    /**
+     * Utilizing the ResultProcessor class, you can easily get the result
+     * in form of array. When this method called the $query private variable
+     * will be automatically cleared.
+     *
+     * @return array
+     */
+    public function getResult()
+    {
+        $result = new ResultProcessor($this->execute($this->query));
+        $this->clearQuery();
+        return $result->getNodeValue();
     }
 
 }

@@ -1,6 +1,6 @@
 <?php namespace Aprillins\LiteGrabber\Classes;
 
-class ProcessorArguments
+class ArgumentProcessor
 {
         
     protected $args;

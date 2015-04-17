@@ -20,7 +20,7 @@ class HTMLTagsMethod extends HTMLMethod
         'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'header', 'footer', 'nav', 'div', 'section', 'aside', 'article', 'form', 'table', 'pre', 'blockquote', 'code',
         'ul', 'ol', 'li', 'dd', 'dl', 'dt', 'tr', 'td', 'th', 'thead', 'tfoot',
-        'a', 'span', 'strong', 'em', 'label', 'cite', 'u', 'i', 'b',
+        'p', 'a', 'span', 'strong', 'em', 'label', 'cite', 'u', 'i', 'b',
         'img', 'figure', 'embed', 'canvas', 'caption',
         'input', 'select', 'option', 'button', 'textarea'
     ];

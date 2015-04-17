@@ -2,6 +2,7 @@
 
 use Aprillins\LiteGrabber\LiteGrabber;
 use Aprillins\LiteGrabber\Classes\ProcessorArguments;
+use Stringy\Stringy as S;
 
 /**
  * This class searches target method if available and processes it in order
@@ -10,6 +11,47 @@ use Aprillins\LiteGrabber\Classes\ProcessorArguments;
  */
 class HTMLMethodProcessor
 {
+    
+    /**
+     * HTMLTagsMethod instantiation variable.
+     *
+     * @var object;
+     */
+    private $tagsMethod; 
+
+    /**
+     * HTMLAttributeMethod instantiation variable.
+     *
+     * @var object;
+     */
+    private $attributesMethod;
+
+    /**
+     * HTMLMethodProcessor instantiation variable.
+     *
+     * @var object;
+     */
+    private $htmlMethodProcessor;
+
+    public function __construct()
+    {
+        $htmlTagsMethod = new HTMLTagsMethod;
+        $htmlAttributesMethod = new HTMLAttributesMethod;
+        $this->tagsMethod = $htmlTagsMethod->getList();
+        $this->attributesMethod = $htmlAttributesMethod->getAsProperty();
+    }
+
+    public function filter($method, $args, &$query)
+    {
+        if (in_array($method, $this->tagsMethod))
+            return $this->methodProcessor($method, $args, $query);
+        
+        if (in_array($method, $this->attributesMethod)) 
+            return $this->atMethodProcessor($method, $args, $query);
+
+        return false;
+    }
+
     /**
      * This build query for XPath attribute.
      *
@@ -23,7 +65,6 @@ class HTMLMethodProcessor
         } else {
             return;
         }
-
         return $query;
     }
 
@@ -34,19 +75,16 @@ class HTMLMethodProcessor
      * @param array $args
      * @return object
      */
-    // public function methodProcessor($method, $args)
-    public function process(ProcessorArguments $pa)
+    public function methodProcessor($method, $args, &$query)
+    // public function process(ProcessorArguments $pa)
     {   
-        $query = $this->htmlTagsProcessor($pa->getArgs());
+        $query = $this->htmlTagsProcessor($args);
         
         if (!empty($args[1]) && $args[1] == true) {
-            $this->query .= '//'.$pa->getMethod().$pa->getQuery();
+            $this->query .= '//'.$method.$query;
         } else {
-            $this->query .= '/'.$pa->getMethod().$pa->getQuery();
+            $this->query .= '/'.$method.$query;
         }
-        $pa->setArgs($this->query);
-
-        //return $this;
     }   
     
     /**
@@ -56,17 +94,16 @@ class HTMLMethodProcessor
      * @param array $args
      * @return object
      */
-    public function atMethodProcessor($method, $args)
+    public function atMethodProcessor($method, $args, &$query)
     {
         $query = $this->htmlTagsProcessor($args);
-        $method = S::removeLeft($method, 'at');
-        $method = S::toLowerCase($method);
+        $method = S::create($method)->removeLeft('at')->toLowerCase();
         if (!empty($args[1]) && $args[1] == true) {
             $this->query .= '//@'.$method.$query;
         } else {
             $this->query .= '/@'.$method.$query;
         }
-        return $this;
+        //return $this->context;
     }
 
     /**
@@ -78,4 +115,14 @@ class HTMLMethodProcessor
     {     
         return $this->query;
     }
+
+    /**
+     * Clear or make the $query variable empty
+     *
+     */
+    public function clearQuery()
+    {
+        $this->query = null;
+    }
+
 }

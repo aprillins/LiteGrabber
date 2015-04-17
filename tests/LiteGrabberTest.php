@@ -48,6 +48,7 @@ class LiteGrabberTest extends PHPUnit_Framework_TestCase
 
         // Set XPath anywhere selector // to true
         $query = $this->lg->article(['class' => 'post'], true)->getQuery();
+        
         $this->assertNotNull($query);
         $this->assertEquals('//article[@class="post"]', $query);
     }

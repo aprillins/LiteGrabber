@@ -25,12 +25,26 @@ class ResultProcessor
      */
     private $nodeValue = array();
 
+    /**
+     * Storing the $result to $result private variable and $result->length to
+     * $length private variable of this class, and execute the process() 
+     * method to fill the $nodeValue variable with DOMNodeList $result content.
+     *
+     * @param DOMNodeList $result
+     */
     public function __construct(DOMNodeList $result)
     { 
         $this->result = $result;
         $this->length = $result->length;
+        $this->process();
     }
 
+    /**
+     * Process the DOMNodeList result so it return as array instead of 
+     * $item(0)->nodeValue. The result stored in $nodeValue variable of this
+     * class.
+     *
+     */
     public function process()
     {
         if ($this->length == 0)
@@ -42,6 +56,11 @@ class ResultProcessor
         return true;
     }
 
+    /**
+     * Get the $nodeValue variable content.
+     *
+     * @return array
+     */
     public function getNodeValue()
     {
         return $this->nodeValue;

@@ -8,6 +8,7 @@ use Aprillins\LiteGrabber\LiteGrabber;
 <!doctype html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Lite Grabber Usage Example</title>
 </head>
 <body>
@@ -18,28 +19,20 @@ use Aprillins\LiteGrabber\LiteGrabber;
             ->h2(['class' => 'post-title'])
             ->a()
             ->getQuery();
-        
-        //$query = '//article/h2/a';
-        $title = $liteGrabber->query($query);
-        var_dump($title);
-        echo $title->item(1)->nodeValue;
-        $liteGrabber->clearQuery();
-        $query = $liteGrabber->div(['class' => 'carousel-inner'], true)->div()->img()->atSrc()->getQuery();
-        $src = $liteGrabber->execute($query);
-        var_dump($query);
-        var_dump($src->item(1)->nodeValue);
-        /*$title = $liteGrabber->xPathObj->query('//h2');
-        
-        if($title->length > 0){
-            echo $title->item(0)->nodeValue;
-        }
-*/
-        //var_dump($liteGrabber->div(['class' => 'post-header'], true)->img(['yes'=>'no'])->div()->getQuery());
+    
+        //$title = $liteGrabber->query($query);
+        /*var_dump($title);
+        echo $title->item(1)->nodeValue;*/
+        $result = $liteGrabber->getResult();
+        print_r($result);
 
+        //ALDOVEGA
+        $liteGrabber->initGrabber('http://www.aldovega.com');
+        //$liteGrabber->clearQuery();
+        $query = $liteGrabber->p(['class' => 'pr hci lh0'], true)->img()->atSrc()->getQuery();
+        var_dump($query);
+
+        print_r($liteGrabber->getResult());
     ?>
 </body>
 </html>
-
-<?php
-
-?>
