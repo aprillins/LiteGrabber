@@ -3,6 +3,17 @@
 LiteGrabber is a simple website content scrapper that utilizing the default 
 PHP DOMXPath class.
 
+##Installation
+You can install LiteGrabber using [Composer](https://getcomposer.org/download/).
+
+`composer require aprillins/litegrabber:dev-master`
+
+Then, update your package.
+
+`composer update`
+
+Don't forget to execute `composer dumpautoload` after the installation.
+
 ##Usage
 
 Using LiteGrabber is tremendously easy. Scrapping can be done with three simple
