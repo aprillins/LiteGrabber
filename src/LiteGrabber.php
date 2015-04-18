@@ -64,21 +64,8 @@ class LiteGrabber
      */
     public function __construct($url)
     {
-        $this->callFunctions();
-        $this->initGrabber($url);
-    }
-
-    /**
-     * Setting up all the things to make this class working.
-     *
-     */
-    public function callFunctions()
-    {
-        $htmlTagsMethod = new HTMLTagsMethod;
-        $htmlAttributesMethod = new HTMLAttributesMethod;
         $this->htmlMethodProcessor = new HTMLMethodProcessor();
-        $this->tagsMethod = $htmlTagsMethod->getList();
-        $this->attributesMethod = $htmlAttributesMethod->getAsProperty();
+        $this->initGrabber($url);
     }
 
     /**
