@@ -11,11 +11,15 @@ use DomDocument;
 use DOMXPath;
 use Exception;
 
-/*
-* For xpath syntax go to http://www.w3schools.com/xpath/xpath_syntax.asp
-*
-*
-*/
+/**
+ * LiteGrabber main class.
+ * For xpath syntax go to http://www.w3schools.com/xpath/xpath_syntax.asp
+ * 
+ * @package    LiteGrabber
+ * @author     Aprillins <aprillins@gmail.com>
+ * @link       http://github.com/aprillins/LiteGrabber
+ * @license    MIT
+ */
 class LiteGrabber
 {
     /**

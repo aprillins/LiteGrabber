@@ -1,9 +1,9 @@
-#LiteGrabber
+# LiteGrabber
 
 LiteGrabber is a simple website content scrapper that utilizing the default 
 PHP DOMXPath class.
 
-##Installation
+## Installation
 You can install LiteGrabber using [Composer](https://getcomposer.org/download/).
 
 `composer require aprillins/litegrabber:dev-master`
@@ -14,7 +14,7 @@ Then, update your package.
 
 Don't forget to execute `composer dumpautoload` after the installation.
 
-##Usage
+## Usage
 
 Using LiteGrabber is tremendously easy. Scrapping can be done with three simple
 step. First, create the LiteGrabber instance.
@@ -41,7 +41,7 @@ The result will be returned in a form of array. The result will be an empty
 array if your query compositions don't match with the actual element on a web 
 page you want to scrap.
 
-##Query Explanation
+## Query Explanation
 On the second step above, you see that `div([], true)` have to parameters. The 
 first one is specification of tag attribute. If you want to scrap specifically
 from `div` which has certain class attribute with certain value. You have to
