@@ -14,6 +14,12 @@ class LiteGrabberTest extends PHPUnit_Framework_TestCase
         
     }
     
+    public function testStaticFunctionCreateReturnLiteGrabber()
+    {
+        $im = LiteGrabber::create('http://www.collections.com/php-packages/aprillins/litegrabber/samplepage/sample-2.html');
+        $this->assertInstanceOf('Aprillins\LiteGrabber\LiteGrabber', $im);
+    }
+    
     public function testQueryIfItIsNotEmptyNotNull()
     {
         $query = '//article/h2/a';

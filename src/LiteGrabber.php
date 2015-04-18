@@ -82,6 +82,17 @@ class LiteGrabber
     }
 
     /**
+     * Static function to create this class instance
+     *
+     * @return object LiteGrabber
+     */
+    public static function create($url)
+    {
+        $instance = new self($url);
+        return $instance;
+    }
+
+    /**
      * If you're gonna test the class using PHPUnit you can call either
      * by using this method or the class constructor argument. This method
      * disable the curlGet() method, so you can get the test results faster.
