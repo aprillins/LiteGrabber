@@ -30,6 +30,8 @@ use Aprillins\LiteGrabber\LiteGrabber;
         echo '<pre>';
         print_r($liteGrabber->getResult());
         echo '</pre>';
+
+        $liteGrabber->getNumberOfCall();
     ?>
 </body>
 </html>

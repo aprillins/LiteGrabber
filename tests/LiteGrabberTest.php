@@ -32,22 +32,26 @@ class LiteGrabberTest extends PHPUnit_Framework_TestCase
     {
         $query = $this->lg->article()->getQuery();
         $this->assertNotNull($query);
-        $this->assertEquals('/article', $query);
+        $this->assertEquals('//article', $query);
     }
 
     public function testCallingTwoDynamicFunctionsEndWithGetQuery()
     {
         $query = $this->lg->article()->h2()->getQuery();
         $this->assertNotNull($query);
-        $this->assertEquals('/article/h2', $query);
+        $this->assertEquals('//article/h2', $query);
+
+        $this->lg->clearQuery();
+        $query = $this->lg->article()->h2(['class' => 'post'])->getQuery();
+        $this->assertEquals('//article/h2[@class="post"]', $query);
     }
 
     public function testCallingOneDynamicFunctionWithArgumentsEndWithGetQuery()
     {
         // Set XPath anywhere selector // to false
-        $query = $this->lg->article(['class' => 'post'], false)->getQuery();
+        $query = $this->lg->article(['class' => 'post'])->getQuery();
         $this->assertNotNull($query);
-        $this->assertEquals('/article[@class="post"]', $query);
+        $this->assertEquals('//article[@class="post"]', $query);
 
         // Clear the $query
         $this->lg->clearQuery();
@@ -87,4 +91,6 @@ class LiteGrabberTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(is_object($title->item(0)));
         
     }
+
+    
 }

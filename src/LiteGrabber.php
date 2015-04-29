@@ -58,6 +58,14 @@ class LiteGrabber
     private $htmlMethodProcessor;
 
     /**
+     * Determine first call of the get function as true.
+     * It means if the first method fired then first call should be false
+     *
+     * @var boolean
+     */
+    private $firstCall = true;
+
+    /**
      * Calling callFunctions() and initGrabber() functions as initialization.
      *
      * @param string $url
@@ -106,15 +114,50 @@ class LiteGrabber
      */
     public function __call($method, $args)
     {   
-
+        $args = $this->checkArgs($args);
         $this->htmlMethodProcessor->filter($method, $args, $this->query);
         $query = $this->htmlMethodProcessor->getQuery();
         $this->setQuery($query);
         
-        if(!$this->getQuery())
+        if (!$this->getQuery())
             return false;
 
         return $this;
+    }
+
+    /**
+     * Check if the function is the first function called by this class.
+     * It means LiteGrabber->div()->h2()->getQuery() the div is considered
+     * as the first call. Then the isFirstCall will return true for the first
+     * time and return false for the secont time when it goes to h2() function.
+     *
+     * @return boolean
+     */
+    public function isFirstCall()
+    {
+        if (!$this->firstCall)
+            return false;
+
+        return true;
+    }   
+
+    /**
+     * Checks and modifies the $args variable if isFirstCall() method returns
+     * true.
+     *
+     * @return array $args
+     */
+    private function checkArgs($args)
+    {
+        if ($this->isFirstCall()) {
+            $this->firstCall = false;
+            if (empty($args[0]))
+                $args[0] = array();
+            if (empty($args[1]))    
+                $args[1] = true;
+        }
+
+        return $args;
     }
 
     /**
@@ -171,6 +214,7 @@ class LiteGrabber
      */
     public function clearQuery()
     {
+        $this->firstCall = true;
         $this->query = null;
         $this->htmlMethodProcessor->clearQuery();
     }
