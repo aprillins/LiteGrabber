@@ -31,6 +31,12 @@ this.
 $query = $liteGrabber->div([], true)->a()->atSrc()->getQuery();
 ```
 
+OR Since 1.2 you can build the query simpler than before. The way it works is like this.
+
+```php
+$query = $liteGrabber->div()->a()->atSrc()->getQuery();
+```
+
 Third, let's get the result!
 
 ```php
@@ -52,7 +58,9 @@ div(['class' => 'post-wrapper home'], true)
 ```
 
 Example above will set the query to `<div class="post-wrapper home">`. You MUST
-NOT forget to put second argument to `true` for the first query.
+NOT forget to put second argument to `true` for the first query. Whoops don't
+worry since version 1.2 you MAY forget to put arguments for the first query.
+The default is set to empty array for first argument and true for second argument. 
 
 If you have done arranging the query, end it with `getQuery()` to make sure
 that you reach the end of query and ready to process to the next step.
