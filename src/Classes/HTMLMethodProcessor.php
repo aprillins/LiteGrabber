@@ -41,6 +41,14 @@ class HTMLMethodProcessor
         $this->attributesMethod = $htmlAttributesMethod->getAsProperty();
     }
 
+    /**
+     * Filtering the method, arguments, and query given by method chaining
+     * 
+     * @param string $method
+     * @param array $args
+     * @param string $query
+     * @return nothing|false
+     */
     public function filter($method, $args, &$query)
     {
         if (in_array($method, $this->tagsMethod))
